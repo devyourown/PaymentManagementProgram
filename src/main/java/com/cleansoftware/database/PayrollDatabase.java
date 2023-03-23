@@ -1,6 +1,7 @@
 package com.cleansoftware.database;
 
 import com.cleansoftware.employee.Employee;
+import com.cleansoftware.payment.affiliation.Affiliation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,9 +9,11 @@ import java.util.Map;
 public class PayrollDatabase {
     private static final PayrollDatabase payrollDatabase = new PayrollDatabase();
     private Map<Integer, Employee> itsEmployee;
+    private Map<Integer, Employee> unionMember;
 
     private PayrollDatabase() {
         itsEmployee = new HashMap<>();
+        unionMember = new HashMap<>();
     }
 
     public static PayrollDatabase getInstance() {
@@ -30,5 +33,13 @@ public class PayrollDatabase {
 
     public void clear() {
         itsEmployee.clear();
+    }
+
+    public Employee getUnionMember(int memberId) {
+        return unionMember.get(memberId);
+    }
+
+    public void addUnionMember(int memberId, Employee e) {
+        unionMember.put(memberId, e);
     }
 }

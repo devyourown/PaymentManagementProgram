@@ -5,6 +5,8 @@ import com.cleansoftware.employee.AddCommissionedEmployee;
 import com.cleansoftware.employee.AddHourlyEmployee;
 import com.cleansoftware.employee.AddSalariedEmployee;
 import com.cleansoftware.employee.Employee;
+import com.cleansoftware.payment.affiliation.ServiceCharge;
+import com.cleansoftware.payment.affiliation.UnionAffiliation;
 import com.cleansoftware.payment.classification.CommissionedClassification;
 import com.cleansoftware.payment.classification.HourlyClassification;
 import com.cleansoftware.payment.classification.PaymentClassification;
@@ -19,6 +21,7 @@ import com.cleansoftware.payment.schedule.WeeklySchedule;
 import com.cleansoftware.payment.timecard.TimeCard;
 import com.cleansoftware.transaction.DeleteEmployeeTransaction;
 import com.cleansoftware.transaction.SalesReceiptTransaction;
+import com.cleansoftware.transaction.ServiceChargeTransaction;
 import com.cleansoftware.transaction.TimeCardTransaction;
 import org.junit.jupiter.api.Test;
 
@@ -150,5 +153,21 @@ class PayrollTest {
     }
 
     @Test
-    void 
+    void testAddServiceCharge() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        assertNotNull(e);
+        UnionAffiliation af = new UnionAffiliation(12.5);
+        e.setAffiliation(af);
+        int memberId = 86;
+        PayrollDatabase.getInstance().addUnionMember(memberId, e);
+        ServiceChargeTransaction sct = new ServiceChargeTransaction(memberId, 20011101, 12.95);
+        sct.execute();
+        ServiceCharge sc = af.getServiceCharge(20011101);
+        assertNotNull(sc);
+        assertEquals(12.95, sc.getAmount(), 0.01);
+    }
 }

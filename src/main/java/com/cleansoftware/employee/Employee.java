@@ -1,5 +1,6 @@
 package com.cleansoftware.employee;
 
+import com.cleansoftware.payment.affiliation.Affiliation;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.method.PaymentMethod;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
@@ -11,6 +12,7 @@ public class Employee {
     private PaymentSchedule paymentSchedule;
     private PaymentClassification paymentClassification;
     private PaymentMethod paymentMethod;
+    private Affiliation affiliation;
 
     public Employee(int empId, String itsName, String itsAddress) {
         this.empId = empId;
@@ -45,5 +47,13 @@ public class Employee {
 
     public String getItsName() {
         return itsName;
+    }
+
+    public Affiliation getAffiliation() {
+        return this.affiliation;
+    }
+
+    public void setAffiliation(Affiliation affiliation) {
+        this.affiliation = affiliation;
     }
 }
