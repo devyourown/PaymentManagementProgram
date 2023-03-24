@@ -13,7 +13,7 @@ public class WeeklySchedule implements PaymentSchedule {
     @Override
     public Calendar getStartDate(Calendar payDate) {
         Calendar result = (Calendar) payDate.clone();
-        result.roll(Calendar.DATE, -7);
+        result.add(Calendar.DATE, -6);
         return result;
     }
 }

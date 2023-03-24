@@ -1,6 +1,7 @@
 package com.cleansoftware.payment.classification;
 
 import com.cleansoftware.pay.Paycheck;
+import com.cleansoftware.payment.UtilDate;
 import com.cleansoftware.payment.timecard.TimeCard;
 
 import java.util.Calendar;
@@ -32,7 +33,7 @@ public class HourlyClassification implements PaymentClassification {
     public double calculatePay(Paycheck paycheck) {
         double result = 0;
         for (TimeCard timecard : timeCards.values()) {
-            if (isInPayPeriod(timecard.getDate(), paycheck))
+            if (UtilDate.isInPayPeriod(timecard.getDate(), paycheck))
                 result += calculatePayForTimeCard(timecard);
         }
         return result;

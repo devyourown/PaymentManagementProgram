@@ -1,6 +1,7 @@
 package com.cleansoftware.payment.affiliation;
 
 import com.cleansoftware.pay.Paycheck;
+import com.cleansoftware.payment.UtilDate;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -9,7 +10,7 @@ import java.util.Map;
 public class UnionAffiliation implements Affiliation {
     private double chargeRate;
     private int memberId;
-    private Map<Long, ServiceCharge> serviceCharges;
+    private Map<Calendar, ServiceCharge> serviceCharges;
 
     public UnionAffiliation(int memberId, double chargeRate) {
         this.memberId = memberId;
@@ -17,11 +18,11 @@ public class UnionAffiliation implements Affiliation {
         this.serviceCharges = new HashMap<>();
     }
 
-    public void addServiceCharge(long date, double charge) {
+    public void addServiceCharge(Calendar date, double charge) {
         serviceCharges.put(date, new ServiceCharge(date, charge));
     }
 
-    public ServiceCharge getServiceCharge(long date) {
+    public ServiceCharge getServiceCharge(Calendar date) {
         return serviceCharges.get(date);
     }
 
@@ -39,6 +40,7 @@ public class UnionAffiliation implements Affiliation {
                 paycheck.getPayPeriodStartDate(),
                 paycheck.getPayPeriodEndDate());
         double totalDues = getDues() * fridays;
+        totalDues += getServiceCharges(paycheck);
         return totalDues;
     }
 
@@ -52,5 +54,14 @@ public class UnionAffiliation implements Affiliation {
             day.roll(Calendar.DATE, 1);
         }
         return fridays + 1;
+    }
+
+    private double getServiceCharges(Paycheck paycheck) {
+        double result = 0;
+        for (ServiceCharge sc : serviceCharges.values()) {
+            if (UtilDate.isInPayPeriod(sc.getDate(), paycheck))
+                result += sc.getAmount();
+        }
+        return result;
     }
 }

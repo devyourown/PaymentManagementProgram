@@ -1,6 +1,7 @@
 package com.cleansoftware.payment.classification;
 
 import com.cleansoftware.pay.Paycheck;
+import com.cleansoftware.payment.UtilDate;
 import com.cleansoftware.payment.receipt.SalesReceipt;
 
 import java.util.*;
@@ -39,7 +40,7 @@ public class CommissionedClassification implements PaymentClassification {
         double result = getSalary();
         for (List<SalesReceipt> bunchOfSR : salesReceipts.values()) {
             for (SalesReceipt sr : bunchOfSR) {
-                if (isInPayPeriod(sr.getDate(), paycheck))
+                if (UtilDate.isInPayPeriod(sr.getDate(), paycheck))
                     result += calculateCommission(sr);
             }
         }

@@ -1,14 +1,20 @@
 package com.cleansoftware.payment.affiliation;
 
+import java.util.Calendar;
+
 public class ServiceCharge {
-    private long date;
+    private Calendar date;
     private double charge;
-    public ServiceCharge(long date, double charge) {
+    public ServiceCharge(Calendar date, double charge) {
         this.date = date;
         this.charge = charge;
     }
 
     public double getAmount() {
         return charge;
+    }
+
+    public Calendar getDate() {
+        return date;
     }
 }
