@@ -21,9 +21,9 @@ public class TimeCardTransaction implements Transaction {
         Employee e = PayrollDatabase.getInstance().getEmployee(empId);
         if (e == null)
             throw new RuntimeException("No Employee");
-        if (!e.getPaymentClassification().getClass().isInstance(HourlyClassification.class))
-            throw new RuntimeException("Not Hourly Classification.");
         HourlyClassification hc = (HourlyClassification) e.getPaymentClassification();
+        if (hc == null)
+            throw new RuntimeException("Not Hourly Classification.");
         hc.addTimeCard(new TimeCard(date, hours));
     }
 }

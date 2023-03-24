@@ -2,6 +2,7 @@ package com.cleansoftware.transaction;
 
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.Employee;
+import com.cleansoftware.payment.affiliation.NoAffiliation;
 import com.cleansoftware.payment.method.HoldMethod;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.method.PaymentMethod;
@@ -31,6 +32,7 @@ public abstract class AddEmployeeTransaction implements Transaction{
         e.setPaymentClassification(pc);
         e.setPaymentSchedule(ps);
         e.setPaymentMethod(pm);
+        e.setAffiliation(new NoAffiliation());
         PayrollDatabase.getInstance().addEmployee(empId, e);
     }
 }

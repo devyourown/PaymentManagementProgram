@@ -6,13 +6,16 @@ import com.cleansoftware.employee.AddCommissionedEmployee;
 import com.cleansoftware.employee.AddHourlyEmployee;
 import com.cleansoftware.employee.AddSalariedEmployee;
 import com.cleansoftware.employee.Employee;
+import com.cleansoftware.payment.affiliation.NoAffiliation;
 import com.cleansoftware.payment.affiliation.ServiceCharge;
 import com.cleansoftware.payment.affiliation.UnionAffiliation;
 import com.cleansoftware.payment.classification.CommissionedClassification;
 import com.cleansoftware.payment.classification.HourlyClassification;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.classification.SalariedClassification;
+import com.cleansoftware.payment.method.DirectMethod;
 import com.cleansoftware.payment.method.HoldMethod;
+import com.cleansoftware.payment.method.MailMethod;
 import com.cleansoftware.payment.method.PaymentMethod;
 import com.cleansoftware.payment.receipt.SalesReceipt;
 import com.cleansoftware.payment.schedule.BiweeklySchedule;
@@ -254,5 +257,75 @@ class PayrollTest {
         assertNotNull(cc);
         assertEquals(10000.0, cc.getSalary(), 0.001);
         assertEquals(9.0, cc.getCommissionRate(), 0.001);
+    }
+
+    @Test
+    void testChangeDirectTransaction() {
+        int empId = 3;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "Bob", "Home",
+                1000.0);
+        t.execute();
+        ChangeDirectTransaction cdt = new ChangeDirectTransaction(empId);
+        cdt.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        assertNotNull(e);
+        PaymentMethod pm = e.getPaymentMethod();
+        DirectMethod dm = (DirectMethod) pm;
+        assertNotNull(dm);
+    }
+
+    @Test
+    void testChangeMailTransaction() {
+        int empId = 10;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "eunji", "Home",
+                1000.0);
+        t.execute();
+        ChangeMailTransaction cmt = new ChangeMailTransaction(empId);
+        cmt.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        assertNotNull(e);
+        PaymentMethod pm = e.getPaymentMethod();
+        MailMethod dm = (MailMethod) pm;
+        assertNotNull(dm);
+    }
+
+    @Test
+    void testChangeHoldTransaction() {
+        int empId = 2;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "eunji", "Home",
+                1000.0);
+        t.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        assertNotNull(e);
+        ChangeMailTransaction cmt = new ChangeMailTransaction(empId);
+        cmt.execute();
+        assertInstanceOf(MailMethod.class, e.getPaymentMethod());
+        ChangeHoldTransaction cht = new ChangeHoldTransaction(empId);
+        cht.execute();
+        assertInstanceOf(HoldMethod.class, e.getPaymentMethod());
+    }
+
+    @Test
+    void testChangeMemberTransaction() {
+        int empId = 2;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "eunji", "Home",
+                1000.0);
+        t.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        ChangeMemberTransaction cmt = new ChangeMemberTransaction(empId, 10.2);
+        cmt.execute();
+        assertInstanceOf(UnionAffiliation.class, e.getAffiliation());
+    }
+
+    @Test
+    void testChangeUnaffiliatedTransaction() {
+        int empId = 2;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "eunji", "Home",
+                1000.0);
+        t.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        ChangeUnaffiliatedTransaction cut = new ChangeUnaffiliatedTransaction(empId);
+        cut.execute();
+        assertInstanceOf(NoAffiliation.class, e.getAffiliation());
     }
 }
