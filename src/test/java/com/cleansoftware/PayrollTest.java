@@ -1,6 +1,15 @@
 package com.cleansoftware;
 
-import com.cleansoftware.change.*;
+import com.cleansoftware.change.affiliation.ChangeMemberTransaction;
+import com.cleansoftware.change.affiliation.ChangeUnaffiliatedTransaction;
+import com.cleansoftware.change.method.ChangeDirectTransaction;
+import com.cleansoftware.change.method.ChangeHoldTransaction;
+import com.cleansoftware.change.method.ChangeMailTransaction;
+import com.cleansoftware.change.classification.ChangeCommissionedTransaction;
+import com.cleansoftware.change.classification.ChangeHourlyTransaction;
+import com.cleansoftware.change.classification.ChangeSalariedTransaction;
+import com.cleansoftware.change.personal.ChangeAddressTransaction;
+import com.cleansoftware.change.personal.ChangeNameTransaction;
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.AddCommissionedEmployee;
 import com.cleansoftware.employee.AddHourlyEmployee;
@@ -23,10 +32,10 @@ import com.cleansoftware.payment.schedule.MonthlySchedule;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
 import com.cleansoftware.payment.schedule.WeeklySchedule;
 import com.cleansoftware.payment.timecard.TimeCard;
-import com.cleansoftware.transaction.DeleteEmployeeTransaction;
-import com.cleansoftware.transaction.SalesReceiptTransaction;
-import com.cleansoftware.transaction.ServiceChargeTransaction;
-import com.cleansoftware.transaction.TimeCardTransaction;
+import com.cleansoftware.transaction.employee.DeleteEmployeeTransaction;
+import com.cleansoftware.transaction.receipt.SalesReceiptTransaction;
+import com.cleansoftware.transaction.affilication.ServiceChargeTransaction;
+import com.cleansoftware.transaction.timecard.TimeCardTransaction;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -164,9 +173,9 @@ class PayrollTest {
         t.execute();
         Employee e = PayrollDatabase.getInstance().getEmployee(empId);
         assertNotNull(e);
-        UnionAffiliation af = new UnionAffiliation(12.5);
-        e.setAffiliation(af);
         int memberId = 86;
+        UnionAffiliation af = new UnionAffiliation(memberId, 12.5);
+        e.setAffiliation(af);
         PayrollDatabase.getInstance().addUnionMember(memberId, e);
         ServiceChargeTransaction sct = new ServiceChargeTransaction(memberId, 20011101, 12.95);
         sct.execute();
@@ -308,13 +317,18 @@ class PayrollTest {
     @Test
     void testChangeMemberTransaction() {
         int empId = 2;
+        int memberId = 7734;
         AddSalariedEmployee t = new AddSalariedEmployee(empId, "eunji", "Home",
                 1000.0);
         t.execute();
         Employee e = PayrollDatabase.getInstance().getEmployee(empId);
-        ChangeMemberTransaction cmt = new ChangeMemberTransaction(empId, 10.2);
+        ChangeMemberTransaction cmt = new ChangeMemberTransaction(empId, memberId, 10.2);
         cmt.execute();
         assertInstanceOf(UnionAffiliation.class, e.getAffiliation());
+        UnionAffiliation ua = (UnionAffiliation) e.getAffiliation();
+        assertEquals(10.2, ua.getDues(), 0.001);
+        Employee member = PayrollDatabase.getInstance().getUnionMember(memberId);
+        assertEquals(e, member);
     }
 
     @Test

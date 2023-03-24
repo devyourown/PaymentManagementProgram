@@ -4,7 +4,7 @@ import com.cleansoftware.payment.schedule.MonthlySchedule;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
 import com.cleansoftware.payment.classification.SalariedClassification;
-import com.cleansoftware.transaction.AddEmployeeTransaction;
+import com.cleansoftware.transaction.employee.AddEmployeeTransaction;
 
 public class AddSalariedEmployee extends AddEmployeeTransaction {
     private double salary;

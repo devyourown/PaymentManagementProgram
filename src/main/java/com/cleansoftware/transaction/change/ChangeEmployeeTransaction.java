@@ -1,7 +1,8 @@
-package com.cleansoftware.transaction;
+package com.cleansoftware.transaction.change;
 
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.Employee;
+import com.cleansoftware.transaction.Transaction;
 
 public abstract class ChangeEmployeeTransaction implements Transaction {
     private int empId;

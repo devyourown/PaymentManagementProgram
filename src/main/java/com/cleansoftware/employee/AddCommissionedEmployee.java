@@ -4,7 +4,7 @@ import com.cleansoftware.payment.classification.CommissionedClassification;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.schedule.BiweeklySchedule;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
-import com.cleansoftware.transaction.AddEmployeeTransaction;
+import com.cleansoftware.transaction.employee.AddEmployeeTransaction;
 
 public class AddCommissionedEmployee extends AddEmployeeTransaction {
 

@@ -1,8 +1,8 @@
-package com.cleansoftware.change;
+package com.cleansoftware.change.method;
 
 import com.cleansoftware.payment.method.DirectMethod;
 import com.cleansoftware.payment.method.PaymentMethod;
-import com.cleansoftware.transaction.ChangeMethodTransaction;
+import com.cleansoftware.transaction.change.ChangeMethodTransaction;
 
 public class ChangeDirectTransaction extends ChangeMethodTransaction {
 

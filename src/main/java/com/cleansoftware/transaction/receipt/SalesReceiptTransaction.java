@@ -1,9 +1,10 @@
-package com.cleansoftware.transaction;
+package com.cleansoftware.transaction.receipt;
 
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.Employee;
 import com.cleansoftware.payment.classification.CommissionedClassification;
 import com.cleansoftware.payment.receipt.SalesReceipt;
+import com.cleansoftware.transaction.Transaction;
 
 public class SalesReceiptTransaction implements Transaction {
     private long date;

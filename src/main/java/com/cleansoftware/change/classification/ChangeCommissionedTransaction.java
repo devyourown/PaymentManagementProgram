@@ -1,10 +1,10 @@
-package com.cleansoftware.change;
+package com.cleansoftware.change.classification;
 
 import com.cleansoftware.payment.classification.CommissionedClassification;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.schedule.BiweeklySchedule;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
-import com.cleansoftware.transaction.ChangeClassificationTransaction;
+import com.cleansoftware.transaction.change.ChangeClassificationTransaction;
 
 public class ChangeCommissionedTransaction extends ChangeClassificationTransaction {
     private double nextSalary;

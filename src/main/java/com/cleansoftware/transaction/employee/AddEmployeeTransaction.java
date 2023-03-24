@@ -1,4 +1,4 @@
-package com.cleansoftware.transaction;
+package com.cleansoftware.transaction.employee;
 
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.Employee;
@@ -7,8 +7,9 @@ import com.cleansoftware.payment.method.HoldMethod;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.method.PaymentMethod;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
+import com.cleansoftware.transaction.Transaction;
 
-public abstract class AddEmployeeTransaction implements Transaction{
+public abstract class AddEmployeeTransaction implements Transaction {
     protected int empId;
     protected String itsName;
     protected String itsAddress;

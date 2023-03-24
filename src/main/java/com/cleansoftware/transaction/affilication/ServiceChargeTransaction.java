@@ -1,9 +1,10 @@
-package com.cleansoftware.transaction;
+package com.cleansoftware.transaction.affilication;
 
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.Employee;
 import com.cleansoftware.payment.affiliation.Affiliation;
 import com.cleansoftware.payment.affiliation.UnionAffiliation;
+import com.cleansoftware.transaction.Transaction;
 
 public class ServiceChargeTransaction implements Transaction {
     private int memberId;

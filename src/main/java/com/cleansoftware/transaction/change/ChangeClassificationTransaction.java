@@ -1,4 +1,4 @@
-package com.cleansoftware.transaction;
+package com.cleansoftware.transaction.change;
 
 import com.cleansoftware.employee.Employee;
 import com.cleansoftware.payment.classification.PaymentClassification;

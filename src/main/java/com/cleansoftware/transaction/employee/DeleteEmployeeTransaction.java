@@ -1,4 +1,4 @@
-package com.cleansoftware.transaction;
+package com.cleansoftware.transaction.employee;
 
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.transaction.Transaction;

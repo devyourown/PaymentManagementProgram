@@ -1,7 +1,7 @@
-package com.cleansoftware.change;
+package com.cleansoftware.change.personal;
 
 import com.cleansoftware.employee.Employee;
-import com.cleansoftware.transaction.ChangeEmployeeTransaction;
+import com.cleansoftware.transaction.change.ChangeEmployeeTransaction;
 
 public class ChangeNameTransaction extends ChangeEmployeeTransaction {
     private String nextName;
