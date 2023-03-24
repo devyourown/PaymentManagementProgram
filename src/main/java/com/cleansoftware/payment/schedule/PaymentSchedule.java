@@ -1,4 +1,8 @@
 package com.cleansoftware.payment.schedule;
 
-public class PaymentSchedule {
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+public interface PaymentSchedule {
+    boolean isPayDate(Calendar date);
 }

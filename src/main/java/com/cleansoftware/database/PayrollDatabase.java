@@ -3,7 +3,9 @@ package com.cleansoftware.database;
 import com.cleansoftware.employee.Employee;
 import com.cleansoftware.payment.affiliation.Affiliation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PayrollDatabase {
@@ -45,5 +47,11 @@ public class PayrollDatabase {
 
     public void removeUnionMember(int memberId) {
         unionMember.remove(memberId);
+    }
+
+    public List<Integer> getAllEmployeeIds() {
+        ArrayList<Integer> result = new ArrayList<>();
+        result.addAll(itsEmployee.keySet());
+        return result;
     }
 }

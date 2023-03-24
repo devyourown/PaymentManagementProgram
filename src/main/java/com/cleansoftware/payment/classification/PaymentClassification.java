@@ -1,4 +1,7 @@
 package com.cleansoftware.payment.classification;
 
-public class PaymentClassification {
+import com.cleansoftware.pay.Paycheck;
+
+public interface PaymentClassification {
+    double calculatePay(Paycheck paycheck);
 }

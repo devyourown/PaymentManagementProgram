@@ -1,4 +1,10 @@
 package com.cleansoftware.payment.method;
 
-public class DirectMethod extends PaymentMethod{
+import com.cleansoftware.pay.Paycheck;
+
+public class DirectMethod implements PaymentMethod{
+    @Override
+    public void pay(Paycheck paycheck) {
+
+    }
 }

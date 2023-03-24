@@ -1,9 +1,12 @@
 package com.cleansoftware.employee;
 
+import com.cleansoftware.pay.Paycheck;
 import com.cleansoftware.payment.affiliation.Affiliation;
 import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.method.PaymentMethod;
 import com.cleansoftware.payment.schedule.PaymentSchedule;
+
+import java.util.Calendar;
 
 public class Employee {
     private int empId;
@@ -67,5 +70,19 @@ public class Employee {
 
     public void setAffiliation(Affiliation affiliation) {
         this.affiliation = affiliation;
+    }
+
+    public boolean isPayDate(Calendar payDate) {
+        return paymentSchedule.isPayDate(payDate);
+    }
+
+    public void payday(Paycheck paycheck) {
+        double grossPay = paymentClassification.calculatePay(paycheck);
+        double deductions = affiliation.calculateDeductions(paycheck);
+        double netPay = grossPay - deductions;
+        paycheck.setGrossPay(grossPay);
+        paycheck.setDeductions(deductions);
+        paycheck.setNetPay(netPay);
+        paymentMethod.pay(paycheck);
     }
 }

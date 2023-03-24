@@ -1,4 +1,10 @@
 package com.cleansoftware.payment.method;
 
-public class MailMethod extends PaymentMethod{
+import com.cleansoftware.pay.Paycheck;
+
+public class MailMethod implements PaymentMethod{
+    @Override
+    public void pay(Paycheck paycheck) {
+
+    }
 }

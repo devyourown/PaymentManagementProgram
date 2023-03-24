@@ -15,6 +15,8 @@ import com.cleansoftware.employee.AddCommissionedEmployee;
 import com.cleansoftware.employee.AddHourlyEmployee;
 import com.cleansoftware.employee.AddSalariedEmployee;
 import com.cleansoftware.employee.Employee;
+import com.cleansoftware.pay.Paycheck;
+import com.cleansoftware.pay.PaydayTransaction;
 import com.cleansoftware.payment.affiliation.NoAffiliation;
 import com.cleansoftware.payment.affiliation.ServiceCharge;
 import com.cleansoftware.payment.affiliation.UnionAffiliation;
@@ -37,6 +39,10 @@ import com.cleansoftware.transaction.receipt.SalesReceiptTransaction;
 import com.cleansoftware.transaction.affilication.ServiceChargeTransaction;
 import com.cleansoftware.transaction.timecard.TimeCardTransaction;
 import org.junit.jupiter.api.Test;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -341,5 +347,64 @@ class PayrollTest {
         ChangeUnaffiliatedTransaction cut = new ChangeUnaffiliatedTransaction(empId);
         cut.execute();
         assertInstanceOf(NoAffiliation.class, e.getAffiliation());
+    }
+
+    @Test
+    void testPaySingleSalariedEmployee() {
+        int empId = 1;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "Bob", "Home",
+                1000.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, 10, 30);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNotNull(pc);
+        assertEquals(payDate, pc.getPayDate());
+        assertEquals(1000.0, pc.getGrossPay(), .001);
+        assertEquals("Hold", pc.getField("Disposition"));
+        assertEquals(0.0, pc.getDeductions(), 0.001);
+        assertEquals(1000.0, pc.getNetPay(), 0.001);
+    }
+
+    @Test
+    void testPaySingleSalariedEmployeeOnWrongDate() {
+        int empId = 1;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "Bob", "Home",
+                1000.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, 11, 29);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNull(pc);
+    }
+
+    void validateHourlyPaycheck(PaydayTransaction pt, int empId, Calendar payDate,
+                                double pay) {
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNotNull(pc);
+        assertEquals(payDate, pc.getPayDate());
+        assertEquals(pay, pc.getGrossPay(), .001);
+        assertEquals("Hold", pc.getField("Disposition"));
+        assertEquals(0.0, pc.getDeductions(), .001);
+        assertEquals(pay, pc.getNetPay(), .001);
+    }
+
+    @Test
+    void testPaySingleHourlyEmployeeNoTimeCards() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateHourlyPaycheck(pt, empId, payDate, 0.0);
+    }
+
+    @Test
+    void testPaySingleHourlyEmployeeOneTimeCard() {
+        
     }
 }

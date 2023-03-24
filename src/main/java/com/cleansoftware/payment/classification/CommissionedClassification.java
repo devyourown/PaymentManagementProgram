@@ -1,11 +1,12 @@
 package com.cleansoftware.payment.classification;
 
+import com.cleansoftware.pay.Paycheck;
 import com.cleansoftware.payment.receipt.SalesReceipt;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommissionedClassification extends PaymentClassification {
+public class CommissionedClassification implements PaymentClassification {
     private double salary;
     private double commissionRate;
     private Map<Long, SalesReceipt> salesReceipts;
@@ -30,5 +31,10 @@ public class CommissionedClassification extends PaymentClassification {
 
     public void addSalesReceipt(SalesReceipt salesReceipt) {
         salesReceipts.put(salesReceipt.getDate(), salesReceipt);
+    }
+
+    @Override
+    public double calculatePay(Paycheck paycheck) {
+        return 0;
     }
 }

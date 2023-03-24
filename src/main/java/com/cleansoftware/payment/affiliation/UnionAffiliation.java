@@ -1,5 +1,7 @@
 package com.cleansoftware.payment.affiliation;
 
+import com.cleansoftware.pay.Paycheck;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,5 +30,10 @@ public class UnionAffiliation implements Affiliation {
 
     public int getMemberId() {
         return memberId;
+    }
+
+    @Override
+    public double calculateDeductions(Paycheck paycheck) {
+        return paycheck.getGrossPay() * getDues() * 0.01;
     }
 }

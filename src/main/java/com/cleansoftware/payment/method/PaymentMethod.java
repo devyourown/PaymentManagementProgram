@@ -1,4 +1,7 @@
 package com.cleansoftware.payment.method;
 
-public class PaymentMethod {
+import com.cleansoftware.pay.Paycheck;
+
+public interface PaymentMethod {
+    void pay(Paycheck paycheck);
 }
