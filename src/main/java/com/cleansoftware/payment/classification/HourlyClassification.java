@@ -40,9 +40,9 @@ public class HourlyClassification implements PaymentClassification {
     }
 
     private boolean isInPayPeriod(Calendar payDate, Calendar cardDate) {
-        int payWeek = payDate.get(Calendar.WEEK_OF_MONTH);
-        int cardWeek = cardDate.get(Calendar.WEEK_OF_MONTH);
-        return Math.abs(payWeek - cardWeek) == 0;
+        int payWeek = DayUtil.getDaysAfterAD(payDate);
+        int cardWeek = DayUtil.getDaysAfterAD(cardDate);
+        return Math.abs(payWeek - cardWeek) <= 6;
     }
 
     private double calculatePayForTimeCard(TimeCard tc) {

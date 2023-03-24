@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -160,16 +161,17 @@ class PayrollTest {
         AddCommissionedEmployee t = new AddCommissionedEmployee(empId, "hong", "Home",
                 1000.0, 0.03);
         t.execute();
-        SalesReceiptTransaction srt = new SalesReceiptTransaction(2011031, 110.0, empId);
+        Calendar date = new GregorianCalendar(2001, Calendar.OCTOBER, 31);
+        SalesReceiptTransaction srt = new SalesReceiptTransaction(date, 110.0, empId);
         srt.execute();
         Employee e = PayrollDatabase.getInstance().getEmployee(empId);
         assertNotNull(e);
         PaymentClassification pc = e.getPaymentClassification();
         CommissionedClassification cc = (CommissionedClassification) pc;
         assertNotNull(cc);
-        SalesReceipt sr = cc.getSalesReceipt(2011031);
-        assertNotNull(sr);
-        assertEquals(110.0, sr.getAmount());
+        List<SalesReceipt> sr = cc.getSalesReceipt(date);
+        assertNotNull(sr.get(0));
+        assertEquals(110.0, sr.get(0).getAmount());
     }
 
     @Test
@@ -483,6 +485,88 @@ class PayrollTest {
         PaydayTransaction pt = new PaydayTransaction(payDate);
         pt.execute();
         validateHourlyPaycheck(pt, empId, payDate, 2 * 15.25);
+    }
 
+    void validateCommissionPaycheck(PaydayTransaction pt, int empId, Calendar payDate, double pay) {
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNotNull(pc);
+        assertEquals(payDate, pc.getPayDate());
+        assertEquals(pay, pc.getGrossPay(), .001);
+        assertEquals("Hold", pc.getField("Disposition"));
+        assertEquals(0.0, pc.getDeductions(), .001);
+        assertEquals(pay, pc.getNetPay(), .001);
+    }
+
+    @Test
+    void testPaySingleCommissionedEmployeeOneReceipt() {
+        int empId = 1;
+        AddCommissionedEmployee t = new AddCommissionedEmployee(empId, "Bob", "Home",
+                1000.0, 3.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        SalesReceiptTransaction srt = new SalesReceiptTransaction(payDate, 65, empId);
+        srt.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateCommissionPaycheck(pt, empId, payDate, 1000 + (65*3.0*0.01));
+    }
+
+    @Test
+    void testPaySingleCommissionedEmployeeNoReceipt() {
+        int empId = 1;
+        AddCommissionedEmployee t = new AddCommissionedEmployee(empId, "Bob", "Home",
+                1000.0, 3.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateCommissionPaycheck(pt, empId, payDate, 1000);
+    }
+
+    @Test
+    void testPaySingleCommissionedEmployeeOnWrongDate() {
+        int empId = 1;
+        AddCommissionedEmployee t = new AddCommissionedEmployee(empId, "Bob", "Home",
+                1000.0, 3.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 29);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNull(pc);
+    }
+
+    @Test
+    void testPaySingleCommissionedEmployeeTwoReceipt() {
+        int empId = 2;
+        AddCommissionedEmployee t = new AddCommissionedEmployee(empId, "Bob", "Home",
+                1000.0, 3.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        SalesReceiptTransaction srt = new SalesReceiptTransaction(payDate, 65, empId);
+        SalesReceiptTransaction srt2 = new SalesReceiptTransaction(payDate, 55, empId);
+        srt.execute();
+        srt2.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateCommissionPaycheck(pt, empId, payDate, 1000 + (65*3.0*0.01) + (55*3.0*0.01));
+    }
+
+    @Test
+    void testPaySingleCommissionedEmployeeWithReceiptsSpanningTwoPayPeriods() {
+        int empId = 2;
+        AddCommissionedEmployee t = new AddCommissionedEmployee(empId, "Bob", "Home", 1000,
+                3.0);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        Calendar dateAfterPayPeriod = new GregorianCalendar(2001, Calendar.NOVEMBER, 23);
+
+        SalesReceiptTransaction srt = new SalesReceiptTransaction(payDate, 200, empId);
+        srt.execute();
+        SalesReceiptTransaction srt2 = new SalesReceiptTransaction(dateAfterPayPeriod, 100, empId);
+        srt2.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateHourlyPaycheck(pt, empId, payDate, 1000 + (200*3.0*0.01));
     }
 }

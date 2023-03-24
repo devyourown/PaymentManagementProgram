@@ -1,10 +1,12 @@
 package com.cleansoftware.payment.receipt;
 
+import java.util.Calendar;
+
 public class SalesReceipt {
-    private long date;
+    private Calendar date;
     private double amount;
 
-    public SalesReceipt(long date, double amount) {
+    public SalesReceipt(Calendar date, double amount) {
         this.date = date;
         this.amount = amount;
     }
@@ -13,7 +15,7 @@ public class SalesReceipt {
         return amount;
     }
 
-    public long getDate() {
+    public Calendar getDate() {
         return date;
     }
 }
