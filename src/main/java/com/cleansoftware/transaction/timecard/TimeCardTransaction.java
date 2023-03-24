@@ -7,12 +7,14 @@ import com.cleansoftware.payment.classification.PaymentClassification;
 import com.cleansoftware.payment.timecard.TimeCard;
 import com.cleansoftware.transaction.Transaction;
 
+import java.util.Calendar;
+
 public class TimeCardTransaction implements Transaction {
-    private int date;
+    private Calendar date;
     private double hours;
     private int empId;
 
-    public TimeCardTransaction(int date, double hours, int empId) {
+    public TimeCardTransaction(Calendar date, double hours, int empId) {
         this.date = date;
         this.hours = hours;
         this.empId = empId;

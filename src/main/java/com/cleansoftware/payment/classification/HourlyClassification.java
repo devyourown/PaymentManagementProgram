@@ -3,12 +3,13 @@ package com.cleansoftware.payment.classification;
 import com.cleansoftware.pay.Paycheck;
 import com.cleansoftware.payment.timecard.TimeCard;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public class HourlyClassification implements PaymentClassification {
     private double hourlyRate;
-    private Map<Integer, TimeCard> timeCards;
+    private Map<Calendar, TimeCard> timeCards;
 
     public HourlyClassification(double hourlyRate) {
         this.hourlyRate = hourlyRate;
@@ -29,6 +30,25 @@ public class HourlyClassification implements PaymentClassification {
 
     @Override
     public double calculatePay(Paycheck paycheck) {
-        return 0;
+        double result = 0;
+        Calendar payDate = paycheck.getPayDate();
+        for (TimeCard timecard : timeCards.values()) {
+            if (isInPayPeriod(payDate, timecard.getDate()))
+                result += calculatePayForTimeCard(timecard);
+        }
+        return result;
+    }
+
+    private boolean isInPayPeriod(Calendar payDate, Calendar cardDate) {
+        int payWeek = payDate.get(Calendar.WEEK_OF_MONTH);
+        int cardWeek = cardDate.get(Calendar.WEEK_OF_MONTH);
+        return Math.abs(payWeek - cardWeek) == 0;
+    }
+
+    private double calculatePayForTimeCard(TimeCard tc) {
+        double hours = tc.getHours();
+        double overtime = Math.max(0.0, hours - 8.0);
+        double straightTime = hours - overtime;
+        return straightTime * getHourlyRate() + overtime * getHourlyRate() * 1.5;
     }
 }

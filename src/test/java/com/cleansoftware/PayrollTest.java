@@ -141,7 +141,8 @@ class PayrollTest {
         AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
                 15.25);
         t.execute();
-        TimeCardTransaction tct = new TimeCardTransaction(2011031, 8.0, empId);
+        Calendar date = new GregorianCalendar(2011, Calendar.MARCH, 1);
+        TimeCardTransaction tct = new TimeCardTransaction(date, 8.0, empId);
         tct.execute();
         Employee e = PayrollDatabase.getInstance().getEmployee(empId);
         assertNotNull(e);
@@ -405,6 +406,83 @@ class PayrollTest {
 
     @Test
     void testPaySingleHourlyEmployeeOneTimeCard() {
-        
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        TimeCardTransaction tt = new TimeCardTransaction(payDate, 2.0, empId);
+        tt.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateHourlyPaycheck(pt, empId, payDate, 30.5);
+    }
+
+    @Test
+    void testPaySingleHourlyEmployeeOvertimeOneTimeCard() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+
+        TimeCardTransaction tc = new TimeCardTransaction(payDate, 9.0, empId);
+        tc.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateHourlyPaycheck(pt, empId, payDate, (8 + 1.5) * 15.25);
+    }
+
+    @Test
+    void testPaySingleHourlyEmployeeOnWrongDate() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 8);
+        TimeCardTransaction tt = new TimeCardTransaction(payDate, 9.0, empId);
+        tt.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNull(pc);
+    }
+
+    @Test
+    void testPaySingleHourlyEmployeeTwoTimeCards() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+
+        TimeCardTransaction tt = new TimeCardTransaction(payDate, 2.0, empId);
+        tt.execute();
+        payDate.set(Calendar.DAY_OF_MONTH, 8);
+        TimeCardTransaction tt2 = new TimeCardTransaction(payDate, 5.0, empId);
+        tt2.execute();
+        payDate.set(Calendar.DAY_OF_MONTH, 9);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateHourlyPaycheck(pt, empId, payDate, 7 * 15.25);
+    }
+
+    @Test
+    void testSingleHourlyEmployeeWithTimeCardsSpanningTwoPayPeriods() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 9);
+        Calendar dateInPreviousPayPeriod = new GregorianCalendar(2001, Calendar.NOVEMBER, 2);
+
+        TimeCardTransaction tt = new TimeCardTransaction(payDate, 2.0, empId);
+        tt.execute();
+        TimeCardTransaction tc2 = new TimeCardTransaction(dateInPreviousPayPeriod, 5.0, empId);
+        tc2.execute();
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validateHourlyPaycheck(pt, empId, payDate, 2 * 15.25);
+
     }
 }

@@ -1,10 +1,12 @@
 package com.cleansoftware.payment.timecard;
 
+import java.util.Calendar;
+
 public class TimeCard {
-    private int date;
+    private Calendar date;
     private double hours;
 
-    public TimeCard(int date, double hours) {
+    public TimeCard(Calendar date, double hours) {
         this.date = date;
         this.hours = hours;
     }
@@ -12,7 +14,7 @@ public class TimeCard {
         return hours;
     }
 
-    public int getDate() {
+    public Calendar getDate() {
         return date;
     }
 }
