@@ -1,5 +1,7 @@
 package com.cleansoftware;
 
+import com.cleansoftware.change.ChangeAddressTransaction;
+import com.cleansoftware.change.ChangeNameTransaction;
 import com.cleansoftware.database.PayrollDatabase;
 import com.cleansoftware.employee.AddCommissionedEmployee;
 import com.cleansoftware.employee.AddHourlyEmployee;
@@ -169,5 +171,31 @@ class PayrollTest {
         ServiceCharge sc = af.getServiceCharge(20011101);
         assertNotNull(sc);
         assertEquals(12.95, sc.getAmount(), 0.01);
+    }
+
+    @Test
+    void testChangeNameTransaction() {
+        int empId = 2;
+        AddHourlyEmployee t = new AddHourlyEmployee(empId, "Bill", "Home",
+                15.25);
+        t.execute();
+        ChangeNameTransaction cnt = new ChangeNameTransaction(empId, "Bob");
+        cnt.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        assertNotNull(e);
+        assertEquals("Bob", e.getItsName());
+    }
+
+    @Test
+    void testChangeAddressTransaction() {
+        int empId = 2;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "Bob", "remote",
+                1000.0);
+        t.execute();
+        ChangeAddressTransaction cat = new ChangeAddressTransaction(empId, "Home");
+        cat.execute();
+        Employee e = PayrollDatabase.getInstance().getEmployee(empId);
+        assertNotNull(e);
+        assertEquals("Home", e.getItsAddress());
     }
 }

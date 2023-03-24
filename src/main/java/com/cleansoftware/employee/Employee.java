@@ -49,6 +49,18 @@ public class Employee {
         return itsName;
     }
 
+    public void setItsName(String name) {
+        this.itsName = name;
+    }
+
+    public String getItsAddress() {
+        return this.itsAddress;
+    }
+
+    public void setItsAddress(String address) {
+        this.itsAddress = address;
+    }
+
     public Affiliation getAffiliation() {
         return this.affiliation;
     }
