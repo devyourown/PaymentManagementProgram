@@ -5,18 +5,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Paycheck {
-    private Calendar payDate;
+    private Calendar payPeriodStartDate;
+    private Calendar payPeriodEndDate;
     private double grossPay;
     private double deductions;
     private double netPay;
     private Map<String, String> fields;
 
-    public Paycheck(Calendar payDate) {
-        this.payDate = payDate;
+    public Paycheck(Calendar periodStartDate, Calendar periodEndDate) {
+        this.payPeriodStartDate = periodStartDate;
+        this.payPeriodEndDate = periodEndDate;
         fields = new HashMap<>();
     }
-    public Calendar getPayDate() {
-        return payDate;
+    public Calendar getPayPeriodStartDate() {
+        return payPeriodStartDate;
+    }
+
+    public Calendar getPayPeriodEndDate() {
+        return payPeriodEndDate;
     }
 
     public double getGrossPay() {

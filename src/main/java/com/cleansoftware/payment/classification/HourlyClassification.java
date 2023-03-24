@@ -31,18 +31,11 @@ public class HourlyClassification implements PaymentClassification {
     @Override
     public double calculatePay(Paycheck paycheck) {
         double result = 0;
-        Calendar payDate = paycheck.getPayDate();
         for (TimeCard timecard : timeCards.values()) {
-            if (isInPayPeriod(payDate, timecard.getDate()))
+            if (isInPayPeriod(timecard.getDate(), paycheck))
                 result += calculatePayForTimeCard(timecard);
         }
         return result;
-    }
-
-    private boolean isInPayPeriod(Calendar payDate, Calendar cardDate) {
-        int payWeek = DayUtil.getDaysAfterAD(payDate);
-        int cardWeek = DayUtil.getDaysAfterAD(cardDate);
-        return Math.abs(payWeek - cardWeek) <= 6;
     }
 
     private double calculatePayForTimeCard(TimeCard tc) {

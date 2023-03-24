@@ -5,4 +5,6 @@ import java.util.GregorianCalendar;
 
 public interface PaymentSchedule {
     boolean isPayDate(Calendar date);
+
+    Calendar getStartDate(Calendar payDate);
 }

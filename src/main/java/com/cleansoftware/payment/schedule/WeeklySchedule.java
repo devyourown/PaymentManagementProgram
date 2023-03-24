@@ -9,4 +9,11 @@ public class WeeklySchedule implements PaymentSchedule {
     public boolean isPayDate(Calendar date) {
         return date.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY;
     }
+
+    @Override
+    public Calendar getStartDate(Calendar payDate) {
+        Calendar result = (Calendar) payDate.clone();
+        result.roll(Calendar.DATE, -7);
+        return result;
+    }
 }

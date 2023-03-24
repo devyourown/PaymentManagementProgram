@@ -2,6 +2,7 @@ package com.cleansoftware.payment.affiliation;
 
 import com.cleansoftware.pay.Paycheck;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +35,22 @@ public class UnionAffiliation implements Affiliation {
 
     @Override
     public double calculateDeductions(Paycheck paycheck) {
-        return paycheck.getGrossPay() * getDues() * 0.01;
+        int fridays = getNumberOfFridaysInPayPeriod(
+                paycheck.getPayPeriodStartDate(),
+                paycheck.getPayPeriodEndDate());
+        double totalDues = getDues() * fridays;
+        return totalDues;
+    }
+
+    private int getNumberOfFridaysInPayPeriod(Calendar payPeriodStart,
+                                              Calendar payPeriodEnd) {
+        int fridays = 0;
+        Calendar day = (Calendar) payPeriodStart.clone();
+        while (day.compareTo(payPeriodEnd) != 0) {
+            if (day.get(Calendar.DAY_OF_WEEK) == Calendar.FRIDAY)
+                fridays++;
+            day.roll(Calendar.DATE, 1);
+        }
+        return fridays + 1;
     }
 }

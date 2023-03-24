@@ -363,7 +363,7 @@ class PayrollTest {
         pt.execute();
         Paycheck pc = pt.getPaycheck(empId);
         assertNotNull(pc);
-        assertEquals(payDate, pc.getPayDate());
+        assertEquals(payDate, pc.getPayPeriodEndDate());
         assertEquals(1000.0, pc.getGrossPay(), .001);
         assertEquals("Hold", pc.getField("Disposition"));
         assertEquals(0.0, pc.getDeductions(), 0.001);
@@ -387,7 +387,7 @@ class PayrollTest {
                                 double pay) {
         Paycheck pc = pt.getPaycheck(empId);
         assertNotNull(pc);
-        assertEquals(payDate, pc.getPayDate());
+        assertEquals(payDate, pc.getPayPeriodEndDate());
         assertEquals(pay, pc.getGrossPay(), .001);
         assertEquals("Hold", pc.getField("Disposition"));
         assertEquals(0.0, pc.getDeductions(), .001);
@@ -490,7 +490,7 @@ class PayrollTest {
     void validateCommissionPaycheck(PaydayTransaction pt, int empId, Calendar payDate, double pay) {
         Paycheck pc = pt.getPaycheck(empId);
         assertNotNull(pc);
-        assertEquals(payDate, pc.getPayDate());
+        assertEquals(payDate, pc.getPayPeriodEndDate());
         assertEquals(pay, pc.getGrossPay(), .001);
         assertEquals("Hold", pc.getField("Disposition"));
         assertEquals(0.0, pc.getDeductions(), .001);
@@ -568,5 +568,29 @@ class PayrollTest {
         PaydayTransaction pt = new PaydayTransaction(payDate);
         pt.execute();
         validateHourlyPaycheck(pt, empId, payDate, 1000 + (200*3.0*0.01));
+    }
+
+    @Test
+    void testSalariedUnionMemberDues() {
+        int empId = 1;
+        AddSalariedEmployee t = new AddSalariedEmployee(empId, "Bob", "Home", 1000.0);
+        t.execute();
+        int memberId = 7734;
+        ChangeMemberTransaction cmt = new ChangeMemberTransaction(empId, memberId, 9.42);
+        cmt.execute();
+        Calendar payDate = new GregorianCalendar(2001, Calendar.NOVEMBER, 30);
+        PaydayTransaction pt = new PaydayTransaction(payDate);
+        pt.execute();
+        validatePaycheck(pt, empId, payDate, 1000.0);
+    }
+
+    private void validatePaycheck(PaydayTransaction pt, int empId, Calendar payDate, double pay) {
+        Paycheck pc = pt.getPaycheck(empId);
+        assertNotNull(pc);
+        assertEquals(payDate, pc.getPayPeriodEndDate());
+        assertEquals(pay, pc.getGrossPay(), .001);
+        assertEquals("Hold", pc.getField("Disposition"));
+        assertEquals(9.42 * 5, pc.getDeductions(), .001);
+        assertEquals(pay-(9.42*5), pc.getNetPay(), .001);
     }
 }

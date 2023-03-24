@@ -85,4 +85,8 @@ public class Employee {
         paycheck.setNetPay(netPay);
         paymentMethod.pay(paycheck);
     }
+
+    public Calendar getPayPeriodStartDate(Calendar payDate) {
+        return paymentSchedule.getStartDate(payDate);
+    }
 }
